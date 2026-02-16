@@ -1,0 +1,11 @@
+{% extends 'bookapp/layout.html' %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    <a href="{% url 'book_list' %}">Back</a>
+    <button type="submit">Send</button>
+    
+</form>
+{% endblock content %}

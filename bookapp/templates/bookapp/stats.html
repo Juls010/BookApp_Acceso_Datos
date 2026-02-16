@@ -1,0 +1,68 @@
+{% extends 'bookapp/layout.html' %}
+
+{% block content %}
+    <h2>Book Statistics</h2>
+    
+    {% if stats.max_pages %}
+        <div style="margin-bottom: 40px;">
+            <ul>
+                <li><strong>Book with most pages:</strong> {{ stats.max_pages }}</li>
+                <li><strong>Book with fewest pages:</strong> {{ stats.min_pages }}</li>
+                <li><strong>Average pages:</strong> {{ stats.avg_pages|floatformat:2 }}</li>
+                <li><strong>Average rating:</strong> {{ stats.avg_rating|floatformat:2 }}</li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 50px; justify-content: center;">
+            <div>
+                <h3>Books by Status</h3>
+                <canvas id="statusChart" width="350" height="350"></canvas>
+            </div>
+            <div>
+                <h3>Books by Rating</h3>
+                <canvas id="ratingChart" width="350" height="350"></canvas>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+        
+        <script>
+            new Chart(document.getElementById('statusChart'), {
+                type: 'pie',
+                data: {
+                    labels: {{ status_labels|safe }},
+                    datasets: [{
+                        label: 'Total Books',
+                        data: {{ status_counts|safe }},
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+                    }]
+                },
+                options: { responsive: false }
+            });
+
+            new Chart(document.getElementById('ratingChart'), {
+                type: 'bar',
+                data: {
+                    labels: {{ rating_labels|safe }},
+                    datasets: [{
+                        label: 'Number of Books',
+                        data: {{ rating_counts|safe }},
+                        backgroundColor: '#36A2EB'
+                    }]
+                },
+                options: { 
+                    responsive: false,
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        </script>
+
+    {% else %}
+        <p>No data available to display statistics. Please add some books first.</p>
+    {% endif %}
+
+    <br>
+    <a href="{% url 'book_list' %}">Back to List</a>
+{% endblock %}
